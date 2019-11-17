@@ -33,6 +33,13 @@ The `registerGroup<>` function creates a factory function which is added to the 
 
 The test runner creates, executes and destroys each group in turn, and deals with scheduling.
 
+Getting started
+===============
+
+A `Sample` test skeleton project is provided which you can copy to provide a starting point.
+
+See the Sming `HostTests` test application for how to create your own test applications.
+
 
 Notes
 -----
@@ -41,5 +48,3 @@ Tests are run with DEBUG_VERBOSE_LEVEL at WARNING level, so `debug_i` statements
 Tests can use other `debug_X` functions as required, or `Serial` print methods.
 
 Tests should compile and run for all architectures.
-
-See the Sming `HostTests` test application for how to create your own test applications.
