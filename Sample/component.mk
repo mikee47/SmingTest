@@ -3,9 +3,7 @@ DEBUG_VERBOSE_LEVEL = 2
 SPI_SIZE = 4M
 
 ARDUINO_LIBRARIES := \
-	SmingTest \
-	ArduinoJson5 \
-	ArduinoJson6
+	SmingTest
 
 COMPONENT_DEPENDS := malloc_count
 
@@ -29,5 +27,6 @@ endif
 endif
 APP_CFLAGS += -DRESTART_DELAY=$(RESTART_DELAY)
 
+# Specific goal for integration testing to perform setup and execution 
 .PHONY: execute
 execute: flash run

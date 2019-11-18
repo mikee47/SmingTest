@@ -1,19 +1,5 @@
-/*
- * Test framework
- *
- * Related tests should be grouped into a single module.
- * The test code should be in a separate file called `test-XXX.cpp`
- * Each group must have a single entry function `void test_XXX()` - define using REGISTER_TEST macro
- * The name of the test must be added to the TEST_MAP definition below.
- *
- * See common.h for further details.
- */
-
 #include <SmingTest.h>
 #include "modules.h"
-
-// Restart tests after a pause
-#define RESTART_DELAY_MS 10000
 
 #define XX(t) extern void REGISTER_TEST(t);
 TEST_MAP(XX)
@@ -32,7 +18,7 @@ static void testsComplete()
 	// In the Host Emulator, this ends the session
 	System.restart();
 #else
-	SmingTest::runner.execute(testsComplete, RESTART_DELAY_MS);
+	SmingTest::runner.execute(testsComplete, RESTART_DELAY);
 #endif
 }
 
@@ -51,6 +37,8 @@ void init()
 
 	// Register tests with the framework
 	registerTests();
+
+	SmingTest::runner.setGroupIntervalMs(TEST_GROUP_INTERVAL);
 
 	// Start tests when system is ready
 	System.onReady([]() { SmingTest::runner.execute(testsComplete); });
