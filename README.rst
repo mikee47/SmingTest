@@ -34,7 +34,7 @@ The `registerGroup<>` function creates a factory function which is added to the 
 The test runner creates, executes and destroys each group in turn, and deals with scheduling.
 
 Getting started
-===============
+---------------
 
 A `Sample` test skeleton project is provided which you can copy to provide a starting point.
 
