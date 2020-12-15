@@ -107,13 +107,45 @@ private:
 /**
  * @brief Check an expression, on failure print it before assertion
  */
-#define REQUIRE(expr)                                                                                                  \
+#define REQUIRE(expr) REQUIRE2(expr, expr)
+
+#define REQUIRE2(res, expr)                                                                                            \
 	do {                                                                                                               \
 		PSTR_ARRAY(tmpExprStr, #expr);                                                                                 \
-		if(expr) {                                                                                                     \
+		if(res) {                                                                                                      \
 			debug_i("OK: %s", tmpExprStr);                                                                             \
 		} else {                                                                                                       \
 			debug_e("FAIL: %s", tmpExprStr);                                                                           \
+			TEST_ASSERT(false);                                                                                        \
+		}                                                                                                              \
+	} while(0)
+
+#define REQUIRE_EQ(a, b)                                                                                               \
+	do {                                                                                                               \
+		PSTR_ARRAY(tmpExprStr, #a " == " #b);                                                                          \
+		auto value_a = a;                                                                                              \
+		auto value_b = b;                                                                                              \
+		if(value_a == value_b) {                                                                                       \
+			debug_i("OK: %s (%s)", tmpExprStr, String(value_a).c_str());                                               \
+		} else {                                                                                                       \
+			debug_e("FAIL: %s (%s, %s)", tmpExprStr, String(value_a).c_str(), String(value_b).c_str());                \
+			TEST_ASSERT(false);                                                                                        \
+		}                                                                                                              \
+	} while(0)
+
+#define REQUIRE_NEQ(a, b)                                                                                              \
+	do {                                                                                                               \
+		PSTR_ARRAY(tmpExprStr, #a " != " #b);                                                                          \
+		auto value_a = a;                                                                                              \
+		auto value_b = b;                                                                                              \
+		String s;                                                                                                      \
+		s += value_a;                                                                                                  \
+		s += ", ";                                                                                                     \
+		s += value_b;                                                                                                  \
+		if(value_a != value_b) {                                                                                       \
+			debug_e("OK: %s (%s)", tmpExprStr, s.c_str());                                                             \
+		} else {                                                                                                       \
+			debug_e("FAIL: %s (%s)", tmpExprStr, s.c_str());                                                           \
 			TEST_ASSERT(false);                                                                                        \
 		}                                                                                                              \
 	} while(0)
