@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <SmingCore.h>
 #include "TestGroup.h"
 #include <WVector.h>
 #include <Timer.h>
@@ -63,15 +64,15 @@ protected:
 private:
 	Vector<Factory> groupFactories; ///< List of registered class factories
 	Timer taskTimer;
-	unsigned taskIndex = 0;
+	unsigned taskIndex{0};
 	enum class State {
 		stopped,
 		waiting, ///< In between tests
 		running,
 	};
-	State state = State::stopped;
+	State state{State::stopped};
 	NanoTime::Time<uint32_t> totalTestTime;
-	unsigned groupIntervalMs = 500;
+	unsigned groupIntervalMs{500};
 	Callback onComplete;
 };
 

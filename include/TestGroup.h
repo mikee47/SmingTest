@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <SmingCore.h>
+#include "TestBase.h"
 #include <Platform/Timers.h>
 #include <Services/Profiling/MinMaxTimes.h>
 using namespace Profiling;
@@ -29,14 +29,10 @@ using namespace Profiling;
 /**
  * @brief Class to simplify generation of begin/end messages for a test group
  */
-class TestGroup
+class TestGroup : public TestBase
 {
 public:
 	TestGroup(const String& name) : name(name)
-	{
-	}
-
-	virtual ~TestGroup()
 	{
 	}
 
@@ -57,7 +53,11 @@ public:
 	/**
 	 * @brief Called when test fails to identify location
 	 */
-	void fail(const char* func);
+	void fail(const char* func) override
+	{
+		TestBase::fail(func);
+		state = State::failed;
+	}
 
 	const String& getName()
 	{
@@ -95,7 +95,7 @@ protected:
 
 private:
 	String name;
-	State state = State::running;
+	State state{State::running};
 	OneShotFastUs groupTimer;
 };
 
@@ -103,60 +103,3 @@ private:
 
 // Catch support
 #define TEST_CASE(name, ...) startItem(_F(name));
-
-/**
- * @brief Check an expression, on failure print it before assertion
- */
-#define REQUIRE(expr) REQUIRE2(expr, expr)
-
-#define REQUIRE2(res, expr)                                                                                            \
-	do {                                                                                                               \
-		PSTR_ARRAY(tmpExprStr, #expr);                                                                                 \
-		if(res) {                                                                                                      \
-			debug_i("OK: %s", tmpExprStr);                                                                             \
-		} else {                                                                                                       \
-			debug_e("FAIL: %s", tmpExprStr);                                                                           \
-			TEST_ASSERT(false);                                                                                        \
-		}                                                                                                              \
-	} while(0)
-
-#define REQUIRE_EQ(a, b)                                                                                               \
-	do {                                                                                                               \
-		PSTR_ARRAY(tmpExprStr, #a " == " #b);                                                                          \
-		auto value_a = a;                                                                                              \
-		auto value_b = b;                                                                                              \
-		if(value_a == value_b) {                                                                                       \
-			debug_i("OK: %s (%s)", tmpExprStr, String(value_a).c_str());                                               \
-		} else {                                                                                                       \
-			debug_e("FAIL: %s (%s, %s)", tmpExprStr, String(value_a).c_str(), String(value_b).c_str());                \
-			TEST_ASSERT(false);                                                                                        \
-		}                                                                                                              \
-	} while(0)
-
-#define REQUIRE_NEQ(a, b)                                                                                              \
-	do {                                                                                                               \
-		PSTR_ARRAY(tmpExprStr, #a " != " #b);                                                                          \
-		auto value_a = a;                                                                                              \
-		auto value_b = b;                                                                                              \
-		String s;                                                                                                      \
-		s += value_a;                                                                                                  \
-		s += ", ";                                                                                                     \
-		s += value_b;                                                                                                  \
-		if(value_a != value_b) {                                                                                       \
-			debug_e("OK: %s (%s)", tmpExprStr, s.c_str());                                                             \
-		} else {                                                                                                       \
-			debug_e("FAIL: %s (%s)", tmpExprStr, s.c_str());                                                           \
-			TEST_ASSERT(false);                                                                                        \
-		}                                                                                                              \
-	} while(0)
-
-/**
- * @brief Check a test result
- * @param result true if test was successful, false on failure
- * @note Failure generates an assertion so when run in the host emulator the process fails.
- */
-#define TEST_ASSERT(result)                                                                                            \
-	if(!(result)) {                                                                                                    \
-		fail(__PRETTY_FUNCTION__);                                                                                     \
-		assert(false);                                                                                                 \
-	}

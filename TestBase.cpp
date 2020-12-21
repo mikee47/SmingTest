@@ -1,5 +1,5 @@
 /**
- * TestGroup.cpp
+ * TestBase.cpp
  *
  * Copyright 2019 mikee47 <mike@sillyhouse.net>
  *
@@ -19,24 +19,22 @@
  *
  ****/
 
-#include "include/SmingTest.h"
+#include "include/TestBase.h"
 
-void TestGroup::initialiseAndExecute()
+bool TestBase::testVerify(bool res, const TestParam& param)
 {
-	groupTimer.start();
-	state = State::running;
-	execute();
-	if(state != State::pending) {
-		complete();
+	if(!res) {
+		if(param.value1) {
+			debug_e("FAIL: %s (%s, %s)", param.expr, param.value1.c_str(), param.value2.c_str());
+		} else {
+			debug_e("FAIL: %s", param.expr);
+		}
+	} else if(param.verbose) {
+		if(param.value1) {
+			debug_i("OK: %s (%s, %s)", param.expr, param.value1.c_str(), param.value2.c_str());
+		} else {
+			debug_i("OK: %s", param.expr);
+		}
 	}
-}
-
-void TestGroup::startItem(const String& tag)
-{
-	m_printf(_F("\r\n>> %s\r\n"), tag.c_str());
-}
-
-void TestGroup::complete()
-{
-	SmingTest::runner.groupComplete(this);
+	return res;
 }
