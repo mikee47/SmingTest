@@ -38,5 +38,8 @@ void TestGroup::startItem(const String& tag)
 
 void TestGroup::complete()
 {
+	if(state != State::failed) {
+		state = State::complete;
+	}
 	SmingTest::runner.groupComplete(this);
 }
