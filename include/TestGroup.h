@@ -72,6 +72,7 @@ public:
 	enum class State {
 		running,
 		pending,
+		complete,
 		failed,
 	};
 

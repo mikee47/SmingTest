@@ -26,6 +26,42 @@ namespace SmingTest
 {
 Runner runner;
 
+void ciUpdateState(TestGroup& group)
+{
+#ifdef ARCH_HOST
+
+	using State = TestGroup::State;
+
+	auto state = group.getState();
+	String s = F("appveyor ");
+	s += (state == State::running) ? F("AddTest") : F("UpdateTest");
+	s += " \"";
+	s += group.getName();
+	s += F("\" -Framework Sming -Filename SmingTest -Outcome ");
+	switch(state) {
+	case State::running:
+		s += F("Running");
+		break;
+	case State::complete:
+		s += F("Passed");
+		break;
+	case State::failed:
+		s += F("Failed");
+		break;
+	default:
+		s += F("Inconclusive");
+	}
+
+	if(state != State::running) {
+		s += F(" -Duration ");
+		s += group.elapsedTime().as<NanoTime::Milliseconds>();
+	}
+
+	system(s.c_str());
+
+#endif
+}
+
 void Runner::runNextGroup()
 {
 	assert(state != State::running);
@@ -43,6 +79,7 @@ void Runner::runNextGroup()
 				 group->getName().c_str(), taskIndex, groupFactories.count());
 
 		state = State::running;
+		ciUpdateState(*group);
 		group->initialiseAndExecute();
 		return;
 	}
@@ -67,6 +104,8 @@ void Runner::groupComplete(TestGroup* group)
 		m_printf(_F("\r\n** Test Group '%s' OK ** Elapsed: %s\r\n"), group->getName().c_str(),
 				 elapsed.toString().c_str());
 	}
+
+	ciUpdateState(*group);
 
 	delete group;
 	taskTimer.setIntervalMs(groupIntervalMs);
