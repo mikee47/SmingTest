@@ -82,7 +82,7 @@ public:
 	do {                                                                                                               \
 		PSTR_ARRAY(tmpExprStr, #a " == " #b);                                                                          \
 		const auto value_a = a;                                                                                        \
-		const auto value_b = b;                                                                                        \
+		const decltype(value_a) value_b = b;                                                                           \
 		if(!test_verify(value_a == value_b, tmpExprStr, value_a, value_b, verbose)) {                                  \
 			TEST_ASSERT(false);                                                                                        \
 		}                                                                                                              \
@@ -92,7 +92,7 @@ public:
 	do {                                                                                                               \
 		PSTR_ARRAY(tmpExprStr, #a " != " #b);                                                                          \
 		const auto value_a = a;                                                                                        \
-		const auto value_b = b;                                                                                        \
+		const decltype(value_a) value_b = b;                                                                           \
 		if(!test_verify(value_a != value_b, tmpExprStr, value_a, value_b, verbose)) {                                  \
 			TEST_ASSERT(false);                                                                                        \
 		}                                                                                                              \
