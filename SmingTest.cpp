@@ -32,12 +32,16 @@ void ciUpdateState(TestGroup& group)
 
 	using State = TestGroup::State;
 
+	auto module = getenv("MODULE") ?: "SmingTest";
+
 	auto state = group.getState();
 	String s = F("appveyor ");
 	s += (state == State::running) ? F("AddTest") : F("UpdateTest");
 	s += " \"";
 	s += group.getName();
-	s += F("\" -Framework Sming -Filename SmingTest -Outcome ");
+	s += F("\" -Framework Sming -Filename \"");
+	s += module;
+	s += F("\" -Outcome ");
 	switch(state) {
 	case State::running:
 		s += F("Running");
@@ -57,7 +61,8 @@ void ciUpdateState(TestGroup& group)
 		s += group.elapsedTime().as<NanoTime::Milliseconds>();
 	}
 
-	system(s.c_str());
+	int res = system(s.c_str());
+	(void)res;
 
 #endif
 }
