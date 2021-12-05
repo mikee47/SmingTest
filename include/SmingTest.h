@@ -40,9 +40,7 @@ using Callback = Delegate<void()>;
 class Runner
 {
 public:
-	Runner() : totalTestTime(NanoTime::Milliseconds, 0)
-	{
-	}
+	Runner();
 
 	void setGroupIntervalMs(unsigned ms)
 	{
@@ -72,6 +70,8 @@ private:
 	};
 	State state{State::stopped};
 	NanoTime::Time<uint32_t> totalTestTime;
+	unsigned testCount{0};
+	unsigned failureCount{0};
 	unsigned groupIntervalMs{500};
 	Callback onComplete;
 };

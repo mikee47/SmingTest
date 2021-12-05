@@ -24,6 +24,16 @@
 #include <WString.h>
 #include <debug_progmem.h>
 
+namespace SmingTest
+{
+enum Framework {
+	none,
+	appveyor,
+};
+
+extern Framework framework;
+} // namespace SmingTest
+
 class TestBase
 {
 public:

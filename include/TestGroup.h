@@ -24,6 +24,7 @@
 #include "TestBase.h"
 #include <Platform/Timers.h>
 #include <Services/Profiling/MinMaxTimes.h>
+#include <csetjmp>
 using namespace Profiling;
 
 /**
@@ -57,6 +58,7 @@ public:
 	{
 		TestBase::fail(func);
 		state = State::failed;
+		longjmp(exception, 1);
 	}
 
 	const String& getName()
@@ -98,6 +100,7 @@ private:
 	String name;
 	State state{State::running};
 	OneShotFastUs groupTimer;
+	jmp_buf exception;
 };
 
 #define startTest(s) startItem(_F(s))

@@ -25,7 +25,9 @@ void TestGroup::initialiseAndExecute()
 {
 	groupTimer.start();
 	state = State::running;
-	execute();
+	if(setjmp(exception) == 0) {
+		execute();
+	}
 	if(state != State::pending) {
 		complete();
 	}

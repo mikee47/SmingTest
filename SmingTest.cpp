@@ -26,45 +26,63 @@ namespace SmingTest
 {
 Runner runner;
 
-void ciUpdateState(TestGroup& group)
+const char* moduleName;
+Framework framework;
+
+static void ciUpdateState(TestGroup& group)
 {
 #ifdef ARCH_HOST
 
 	using State = TestGroup::State;
 
-	auto module = getenv("MODULE") ?: "SmingTest";
+	switch(framework) {
+	case Framework::appveyor: {
+		auto state = group.getState();
+		String s = F("appveyor ");
+		s += (state == State::running) ? F("AddTest") : F("UpdateTest");
+		s += " \"";
+		s += group.getName();
+		s += F("\" -Framework Sming -Filename \"");
+		s += moduleName;
+		s += F("\" -Outcome ");
+		switch(state) {
+		case State::running:
+			s += F("Running");
+			break;
+		case State::complete:
+			s += F("Passed");
+			break;
+		case State::failed:
+			s += F("Failed");
+			break;
+		default:
+			s += F("Inconclusive");
+		}
 
-	auto state = group.getState();
-	String s = F("appveyor ");
-	s += (state == State::running) ? F("AddTest") : F("UpdateTest");
-	s += " \"";
-	s += group.getName();
-	s += F("\" -Framework Sming -Filename \"");
-	s += module;
-	s += F("\" -Outcome ");
-	switch(state) {
-	case State::running:
-		s += F("Running");
-		break;
-	case State::complete:
-		s += F("Passed");
-		break;
-	case State::failed:
-		s += F("Failed");
-		break;
-	default:
-		s += F("Inconclusive");
+		if(state != State::running) {
+			s += F(" -Duration ");
+			s += group.elapsedTime().as<NanoTime::Milliseconds>();
+		}
+
+		assert(system(s.c_str()) == 0);
 	}
 
-	if(state != State::running) {
-		s += F(" -Duration ");
-		s += group.elapsedTime().as<NanoTime::Milliseconds>();
+	case Framework::none:
+		break;
 	}
-
-	int res = system(s.c_str());
-	(void)res;
 
 #endif
+}
+
+Runner::Runner() : totalTestTime(NanoTime::Milliseconds, 0)
+{
+	moduleName = getenv("MODULE") ?: "SmingTest";
+
+	if(getenv("APPVEYOR") != nullptr) {
+		framework = Framework::appveyor;
+	} else {
+		framework = Framework::none;
+	}
 }
 
 void Runner::runNextGroup()
@@ -92,9 +110,16 @@ void Runner::runNextGroup()
 	state = State::stopped;
 
 	m_printf("\r\n\nTESTS COMPLETE\r\n\n");
+	m_printf("%u groups, %u failures\r\n", testCount, failureCount);
 	m_printf("Heap allocations: %u, total: %u bytes, peak: %u, current: %u\r\n", MallocCount::getAllocCount(),
 			 MallocCount::getTotal(), MallocCount::getPeak(), MallocCount::getCurrent());
 	m_printf("Total test time: %s\r\n\n", totalTestTime.value().toString().c_str());
+
+#ifdef ARCH_HOST
+	if(failureCount != 0 && framework == Framework::none) {
+		exit(2);
+	}
+#endif
 
 	onComplete();
 }
@@ -103,8 +128,10 @@ void Runner::groupComplete(TestGroup* group)
 {
 	auto elapsed = group->elapsedTime();
 	totalTestTime += elapsed;
+	++testCount;
 	if(group->getState() == TestGroup::State::failed) {
 		m_printf(_F("\r\n!!!! Test Group '%s' FAILED !!!!\r\n\r\n"), group->getName().c_str());
+		++failureCount;
 	} else {
 		m_printf(_F("\r\n** Test Group '%s' OK ** Elapsed: %s\r\n"), group->getName().c_str(),
 				 elapsed.toString().c_str());
@@ -126,6 +153,7 @@ void Runner::execute(Callback onComplete, unsigned initialDelayMs)
 
 	totalTestTime.time = 0;
 	taskIndex = 0;
+	testCount = failureCount = 0;
 
 	taskTimer.setCallback([this]() { runNextGroup(); });
 
