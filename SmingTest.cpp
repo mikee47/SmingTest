@@ -21,6 +21,9 @@
 
 #include "include/SmingTest.h"
 #include <malloc_count.h>
+#ifdef ARCH_HOST
+#include <IFS/FileSystem.h>
+#endif
 
 namespace SmingTest
 {
@@ -116,8 +119,13 @@ void Runner::runNextGroup()
 	m_printf("Total test time: %s\r\n\n", totalTestTime.value().toString().c_str());
 
 #ifdef ARCH_HOST
-	if(failureCount != 0 && framework == Framework::none) {
-		exit(2);
+	if(failureCount != 0) {
+		auto filename = getenv("TEST_FAILURE_FILE");
+		if(filename != nullptr) {
+			IFS::File file(&IFS::Host::getFileSystem());
+			file.open(filename, IFS::File::CreateNewAlways);
+			assert(file);
+		}
 	}
 #endif
 
