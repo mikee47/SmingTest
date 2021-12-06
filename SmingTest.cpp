@@ -29,13 +29,14 @@ namespace SmingTest
 {
 Runner runner;
 
-const char* moduleName;
 Framework framework;
+
+#ifdef ARCH_HOST
+
+const char* moduleName;
 
 static void ciUpdateState(TestGroup& group)
 {
-#ifdef ARCH_HOST
-
 	using State = TestGroup::State;
 
 	switch(framework) {
@@ -73,12 +74,13 @@ static void ciUpdateState(TestGroup& group)
 	case Framework::none:
 		break;
 	}
+}
 
 #endif
-}
 
 Runner::Runner() : totalTestTime(NanoTime::Milliseconds, 0)
 {
+#ifdef ARCH_HOST
 	moduleName = getenv("MODULE") ?: "SmingTest";
 
 	if(getenv("APPVEYOR") != nullptr) {
@@ -86,6 +88,7 @@ Runner::Runner() : totalTestTime(NanoTime::Milliseconds, 0)
 	} else {
 		framework = Framework::none;
 	}
+#endif
 }
 
 void Runner::runNextGroup()
@@ -105,7 +108,9 @@ void Runner::runNextGroup()
 				 group->getName().c_str(), taskIndex, groupFactories.count());
 
 		state = State::running;
+#ifdef ARCH_HOST
 		ciUpdateState(*group);
+#endif
 		group->initialiseAndExecute();
 		return;
 	}
@@ -145,8 +150,9 @@ void Runner::groupComplete(TestGroup* group)
 				 elapsed.toString().c_str());
 	}
 
+#ifdef ARCH_HOST
 	ciUpdateState(*group);
-
+#endif
 	delete group;
 	taskTimer.setIntervalMs(groupIntervalMs);
 	taskTimer.startOnce();

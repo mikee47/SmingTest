@@ -25,7 +25,7 @@ void TestGroup::initialiseAndExecute()
 {
 	groupTimer.start();
 	state = State::running;
-	if(setjmp(exception) == 0) {
+	if(SmingTest::framework == SmingTest::Framework::none || setjmp(exception) == 0) {
 		execute();
 	}
 	if(state != State::pending) {
@@ -36,6 +36,15 @@ void TestGroup::initialiseAndExecute()
 void TestGroup::startItem(const String& tag)
 {
 	m_printf(_F("\r\n>> %s\r\n"), tag.c_str());
+}
+
+void TestGroup::fail(const char* func)
+{
+	TestBase::fail(func);
+	state = State::failed;
+	if(SmingTest::framework != SmingTest::Framework::none) {
+		longjmp(exception, 1);
+	}
 }
 
 void TestGroup::complete()

@@ -54,12 +54,7 @@ public:
 	/**
 	 * @brief Called when test fails to identify location
 	 */
-	void fail(const char* func) override
-	{
-		TestBase::fail(func);
-		state = State::failed;
-		longjmp(exception, 1);
-	}
+	void fail(const char* func) override;
 
 	const String& getName()
 	{
