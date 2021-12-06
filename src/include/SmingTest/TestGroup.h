@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with SmingTest.
+ * You should have received a copy of the GNU General Public License along with this library.
  * If not, see <https://www.gnu.org/licenses/>.
  *
  * @author: 2018 - Mikee47 <mike@sillyhouse.net>
@@ -25,6 +25,7 @@
 #include <Platform/Timers.h>
 #include <Services/Profiling/MinMaxTimes.h>
 #include <csetjmp>
+
 using namespace Profiling;
 
 /**

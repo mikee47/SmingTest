@@ -1,1 +1,3 @@
 COMPONENT_DEPENDS := malloc_count
+COMPONENT_SRCDIRS := src src/Arch/$(SMING_ARCH)
+COMPONENT_INCDIRS := src/include
