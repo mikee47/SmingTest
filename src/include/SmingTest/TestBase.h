@@ -46,14 +46,14 @@ public:
 	}
 
 	template <typename V>
-	typename std::enable_if<std::is_integral<V>::value, bool>::type
+	typename std::enable_if<std::is_arithmetic<V>::value, bool>::type
 	test_verify(bool res, const char* expr, const V& value1, const V& value2, bool verbose)
 	{
 		return testVerify(res, TestParam{expr, String(value1), String(value2), verbose});
 	}
 
 	template <typename V>
-	typename std::enable_if<!std::is_same<V, String>::value && !std::is_integral<V>::value, bool>::type
+	typename std::enable_if<!std::is_same<V, String>::value && !std::is_arithmetic<V>::value, bool>::type
 	test_verify(bool res, const char* expr, const V& value1, const V& value2, bool verbose)
 	{
 		return testVerify(res, TestParam{expr, toString(value1), toString(value2), verbose});
