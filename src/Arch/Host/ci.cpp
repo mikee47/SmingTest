@@ -86,7 +86,8 @@ void updateState(TestGroup& group)
 			s += group.elapsedTime().as<NanoTime::Milliseconds>();
 		}
 
-		assert(system(s.c_str()) == 0);
+		int res = system(s.c_str());
+		assert(res == 0);
 	}
 
 	case Framework::none:
