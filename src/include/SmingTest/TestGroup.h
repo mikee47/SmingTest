@@ -1,4 +1,4 @@
-/**
+/****
  * TestGroup.h - Extensible test framework for Sming
  *
  * Copyright 2019 mikee47 <mike@sillyhouse.net>
@@ -85,11 +85,18 @@ public:
 	void initialiseAndExecute();
 
 protected:
+	/**
+	 * @brief Call to mark test as pending so it will be executed asynchronously
+	 * Call `complete()` when test is finished.
+	 */
 	void pending()
 	{
 		state = State::pending;
 	}
 
+	/**
+	 * @brief Call to complete pending (asynchronous) test
+	 */
 	void complete();
 
 private:
@@ -101,5 +108,18 @@ private:
 
 #define startTest(s) startItem(_F(s))
 
-// Catch support
+/**
+ * @brief Start a test item
+ *
+ * Use like this:
+ * 
+ * ```
+ * TEST_CASE("My Test") {
+ * 	  ...
+ * }
+ * ```
+ * 
+ * Note that any additional parameters are ignored.
+ * Provided for compatibility with "Catch"
+ */
 #define TEST_CASE(name, ...) startItem(_F(name));

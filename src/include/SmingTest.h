@@ -1,4 +1,4 @@
-/**
+/****
  * SmingTest.h - Extensible test framework for Sming
  *
  * Copyright 2019 mikee47 <mike@sillyhouse.net>
@@ -26,6 +26,25 @@
 #include <WVector.h>
 #include <Timer.h>
 
+/**
+ * @brief Provides consistent global name for test factory function
+ * @param name Name of test
+ *
+ * Test modules should use this macro to implement factory function:
+ * 
+ * ```
+ *  #include <SmingTest.h>
+ *
+ *  class SampleTest: public TestGroup {
+ *  	...
+ *  };
+ *
+ *	void REGISTER_TEST(sample)
+ *	{
+ *		registerGroup<SampleTest>();
+ *	}
+ * ```
+ */
 #define REGISTER_TEST(name) register_test_##name()
 
 namespace SmingTest
