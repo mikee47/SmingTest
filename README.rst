@@ -14,12 +14,16 @@ See the Sming :source:`/tests/HostTests` test application for a more comprehensi
 
 -  A test module contains all code related to testing a specific Component, Library or framework module
 -  If a module contains more than one file then place all files in a sub-directory
--  Each module must have a registration function::
--     Use the :c:macro:`REGISTER_TEST` macro to name the function
--     Add an entry to the :source:`Sample/app/modules.h` file
--  Each module contains one or more test groups
--     Each group is a class inheriting from TestGroup
--     Add a call to :cpp:func:`registerGroup` to the registration function for each test class
+-  Each module must have a registration function:
+
+   - Use the :c:macro:`REGISTER_TEST` macro to name the function
+   - Add an entry to the :source:`Sample/app/modules.h` file
+
+-  Each module contains one or more test groups:
+
+   - Each group is a class inheriting from TestGroup
+   - Add a call to :cpp:func:`registerGroup` to the registration function for each test class
+
 -  Keep each group brief. Use multiple, simpler groups if necessary.
 -  The group :cpp:func:`TestGroup::execute` method is called to run the tests. On return the group is considered to
    have been successfully completed and destroyed.
