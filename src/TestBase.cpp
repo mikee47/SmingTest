@@ -20,20 +20,16 @@
  ****/
 
 #include "include/SmingTest/TestBase.h"
+#include <HardwareSerial.h>
 
 bool TestBase::testVerify(bool res, const TestParam& param)
 {
-	if(!res) {
+	if(!res || param.verbose) {
 		if(param.value1) {
-			debug_e("FAIL: %s (%s, %s)", param.expr, param.value1.c_str(), param.value2.c_str());
+			Serial << (res ? "OK: " : "FAIL: ") << param.expr << " (" << param.value1 << ", " << param.value2 << ')'
+				   << endl;
 		} else {
-			debug_e("FAIL: %s", param.expr);
-		}
-	} else if(param.verbose) {
-		if(param.value1) {
-			debug_i("OK: %s (%s, %s)", param.expr, param.value1.c_str(), param.value2.c_str());
-		} else {
-			debug_i("OK: %s", param.expr);
+			Serial << (res ? "OK: " : "FAIL: ") << param.expr << endl;
 		}
 	}
 	return res;

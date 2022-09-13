@@ -45,11 +45,11 @@ void Runner::runNextGroup()
 		auto group = factory();
 		assert(group != nullptr);
 
-		m_printf(_F("\r\n"
-					"\r\n"
-					"** Test Group: %s (%u of %u)**\r\n"
-					"\r\n"),
-				 group->getName().c_str(), taskIndex, groupFactories.count());
+		Serial << endl
+			   << endl
+			   << "** Test Group: " << group->getName() << " (" << taskIndex << " of " << groupFactories.count()
+			   << ")**" << endl
+			   << endl;
 
 		state = State::running;
 		CI::updateState(*group);
@@ -59,11 +59,11 @@ void Runner::runNextGroup()
 
 	state = State::stopped;
 
-	m_printf("\r\n\nTESTS COMPLETE\r\n\n");
-	m_printf("%u groups, %u failures\r\n", testCount, failureCount);
-	m_printf("Heap allocations: %u, total: %u bytes, peak: %u, current: %u\r\n", MallocCount::getAllocCount(),
-			 MallocCount::getTotal(), MallocCount::getPeak(), MallocCount::getCurrent());
-	m_printf("Total test time: %s\r\n\n", totalTestTime.value().toString().c_str());
+	Serial << endl << endl << _F("TESTS COMPLETE") << endl << endl;
+	Serial << testCount << _F(" groups, ") << failureCount << _F(" failures") << endl;
+	Serial << _F("Heap allocations: ") << MallocCount::getAllocCount() << _F(", total: ") << MallocCount::getTotal()
+		   << _F(" bytes, peak: ") << MallocCount::getPeak() << _F(", current: ") << MallocCount::getCurrent() << endl;
+	Serial << _F("Total test time: ") << totalTestTime.value().toString() << endl << endl;
 
 	if(failureCount != 0) {
 		CI::markTestFailure();
@@ -78,11 +78,11 @@ void Runner::groupComplete(TestGroup* group)
 	totalTestTime += elapsed;
 	++testCount;
 	if(group->getState() == TestGroup::State::failed) {
-		m_printf(_F("\r\n!!!! Test Group '%s' FAILED !!!!\r\n\r\n"), group->getName().c_str());
+		Serial << endl << _F("!!!! Test Group '") << group->getName() << _F("' FAILED !!!!") << endl << endl;
 		++failureCount;
 	} else {
-		m_printf(_F("\r\n** Test Group '%s' OK ** Elapsed: %s\r\n"), group->getName().c_str(),
-				 elapsed.toString().c_str());
+		Serial << endl
+			   << _F("** Test Group '") << group->getName() << _F("' OK ** Elapsed: ") << elapsed.toString() << endl;
 	}
 
 	CI::updateState(*group);

@@ -36,7 +36,7 @@ void TestGroup::initialiseAndExecute()
 
 void TestGroup::startItem(const String& tag)
 {
-	m_printf(_F("\r\n>> %s\r\n"), tag.c_str());
+	Serial << endl << ">> " << tag << endl;
 }
 
 void TestGroup::fail(const char* func)
