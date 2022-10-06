@@ -34,9 +34,12 @@ void TestGroup::initialiseAndExecute()
 	}
 }
 
-void TestGroup::startItem(const String& tag)
+void TestGroup::startItem(const String& tag, const String& description)
 {
 	Serial << endl << ">> " << tag << endl;
+	if(description) {
+		Serial << "   " << description << endl;
+	}
 }
 
 void TestGroup::fail(const char* func)

@@ -50,7 +50,7 @@ public:
 	/**
 	 * @brief Note the start of a test item within a group
 	 */
-	void startItem(const String& tag);
+	void startItem(const String& tag, const String& description = nullptr);
 
 	/**
 	 * @brief Called when test fails to identify location
@@ -114,12 +114,18 @@ private:
  * Use like this:
  * 
  * ```
- * TEST_CASE("My Test") {
+ * TEST_CASE("My Test", "description") {
  * 	  ...
  * }
  * ```
- * 
- * Note that any additional parameters are ignored.
- * Provided for compatibility with "Catch"
+ *
+ * Note: Description is optional.
  */
-#define TEST_CASE(name, ...) startItem(_F(name));
+// https://stackoverflow.com/questions/3046889/optional-parameters-with-c-macros
+#define TEST_CASE_1_ARG(name) startItem(_F(name));
+#define TEST_CASE_2_ARGS(name, desc) startItem(_F(name), _F(desc));
+
+#define GET_3RD_ARG(arg1, arg2, arg3, ...) arg3
+#define TEST_CASE_ARG_CHOOSER(...) GET_3RD_ARG(__VA_ARGS__, TEST_CASE_2_ARGS, TEST_CASE_1_ARG, )
+
+#define TEST_CASE(...) TEST_CASE_ARG_CHOOSER(__VA_ARGS__)(__VA_ARGS__)
